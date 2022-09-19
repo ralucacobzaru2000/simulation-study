@@ -1,0 +1,282 @@
+{
+    "adjustment_method": {
+        "comment": [
+            "input value is 1 if method chosen, 0 if not",
+            "can choose more than one method"
+        ],
+        "IPW": 0,
+        "standardization": 0,
+        "double_robust": 1
+    },
+    "learner": {
+        "comment": [
+            "each method takes list",
+            "each list has individual elements in three possible formats",
+            "1) name + default params (['random_forest_c'])",
+            "2) name + dict of custom params (['random_forest_c', {'n_estimators': 500, 'min_samples_leaf': 20}])",
+            "3) ensemble name (stacking_c, stacking_r, superlearner_c, superlearner_r) followed by list of individual estimators (['stacking_c', ['MLP_c'],['random_forest_c']])"
+        ],
+        "IPW": [
+            [
+                "stacking_c",
+                [
+                    "MLP_c",
+                    {
+                        "hidden_layer_sizes": [
+                            4
+                        ],
+                        "activation": "relu",
+                        "solver": "lbfgs",
+                        "max_iter": 2000
+                    }
+                ],
+                [
+                    "random_forest_c",
+                    {
+                        "n_estimators": 500,
+                        "min_samples_leaf": 20
+                    }
+                ],
+                [
+                    "logistic_regression",
+                    {
+                        "penalty": "none",
+                        "solver": "lbfgs",
+                        "max_iter": 1000
+                    }
+                ],
+                [
+                    "empirical_mean_c"
+                ],
+                [
+                    "logistic_GAM",
+                    {
+                        "n_splines": 4,
+                        "lam": 0.6
+                    }
+                ],
+                [
+                    "logistic_GAM",
+                    {
+                        "n_splines": 6,
+                        "lam": 0.6
+                    }
+                ]
+            ]
+        ],
+        "standardization": [
+            [
+                "stacking_c",
+                [
+                    "MLP_c",
+                    {
+                        "hidden_layer_sizes": [
+                            4
+                        ],
+                        "activation": "relu",
+                        "solver": "lbfgs",
+                        "max_iter": 2000
+                    }
+                ],
+                [
+                    "random_forest_c",
+                    {
+                        "n_estimators": 500,
+                        "min_samples_leaf": 20
+                    }
+                ],
+                [
+                    "logistic_regression",
+                    {
+                        "penalty": "none",
+                        "solver": "lbfgs",
+                        "max_iter": 1000
+                    }
+                ],
+                [
+                    "empirical_mean_c"
+                ],
+                [
+                    "logistic_GAM",
+                    {
+                        "n_splines": 4,
+                        "lam": 0.6
+                    }
+                ],
+                [
+                    "logistic_GAM",
+                    {
+                        "n_splines": 6,
+                        "lam": 0.6
+                    }
+                ]
+            ]
+        ]
+    },
+    "super_learner": {
+        "binary": [
+            [
+                "stacking_c",
+                [
+                    "MLP_c",
+                    {
+                        "hidden_layer_sizes": [
+                            4
+                        ],
+                        "activation": "relu",
+                        "solver": "lbfgs",
+                        "max_iter": 2000
+                    }
+                ],
+                [
+                    "random_forest_c",
+                    {
+                        "n_estimators": 500,
+                        "min_samples_leaf": 20
+                    }
+                ],
+                [
+                    "logistic_regression",
+                    {
+                        "penalty": "none",
+                        "solver": "lbfgs",
+                        "max_iter": 1000
+                    }
+                ],
+                [
+                    "empirical_mean_c"
+                ],
+                [
+                    "logistic_GAM",
+                    {
+                        "n_splines": 4,
+                        "lam": 0.6
+                    }
+                ],
+                [
+                    "logistic_GAM",
+                    {
+                        "n_splines": 6,
+                        "lam": 0.6
+                    }
+                ]
+            ]
+        ],
+        "continuous": [
+            [
+                "stacking_r",
+                [
+                    "MLP_r",
+                    {
+                        "hidden_layer_sizes": [
+                            4
+                        ],
+                        "activation": "relu",
+                        "solver": "lbfgs",
+                        "max_iter": 2000
+                    }
+                ],
+                [
+                    "random_forest_r",
+                    {
+                        "n_estimators": 500,
+                        "min_samples_leaf": 20
+                    }
+                ],
+                [
+                    "linear_regression"
+                ],
+                [
+                    "GAM",
+                    {
+                        "link": "identity",
+                        "n_splines": 6,
+                        "lam": 0.6
+                    }
+                ],
+                [
+                    "GAM",
+                    {
+                        "link": "identity",
+                        "n_splines": 4,
+                        "lam": 0.6
+                    }
+                ],
+                [
+                    "empirical_mean_r"
+                ]
+            ]
+        ]
+    },
+    "double_robust_models": {
+        "comment": [
+            "assign treatment and outcome model for double robust",
+            "only one list for each model",
+            "sample split is 1 to enable, 0 if not"
+        ],
+        "treatment_model": [
+            "IPW"
+        ],
+        "outcome_model": [
+            "standardization"
+        ],
+        "sample_split": 1
+    },
+    "effect_measure": {
+        "comment": [
+            "outcome type: only one of ['survival'], ['binary'], or ['continuous']",
+            "relation limited to any combination of following choices depending on outcome type",
+            "if ['binary'], relation: ['ratio', 'diff', 'or']",
+            "if ['continuous'], relation: ['diff', 'ratio']"
+        ],
+        "outcome_type": [
+            "binary"
+        ],
+        "relation": [
+            "ratio",
+            "diff",
+            "or"
+        ]
+    },
+    "advanced": {
+        "data_process": {
+            "comment": [
+                "default = 0 to remain compressed",
+                "select 1 to decompress",
+                "select 1 to have multiple treatments (2 or more)",
+                "select 1 for only_sparse_covar to decompress everything except covariates"
+            ],
+            "decompress": 0,
+            "multi_treat": 1,
+            "multi_treat_iters": 1,
+            "only_sparse_covar": 0,
+            "bootstrap_seed": 1
+        },
+        "std_error": {
+            "comment": [
+                "input 1 to choose the std error method, 0 if not",
+                "can set both bootstrap and analytic to 1 to see difference btw outcomes"
+            ],
+            "bootstrap": 0,
+            "analytic": 1
+        },
+        "weight_stabilize": {
+            "comment": [
+                "input float as bound to truncate weights for IPW and double robust ([0.001])",
+                "bound value cannot exceed 0.05"
+            ],
+            "truncate": [
+                0.001
+            ],
+            "stabilize": []
+        },
+        "stability_checks": {
+            "comment": [
+                "IPW quantiles"
+            ],
+            "positivity_checks": "True",
+            "outlier_checks": "True",
+            "balance_checks": "True, weighted versions of treated/untreated; similar covariates; check correct confounding adjustment"
+        }
+    }
+}
